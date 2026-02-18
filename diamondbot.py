@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import json
+from streamlit_option_menu import option_menu
 
 # --- ၁။ CONFIGURATION ---
 BOT_TOKEN = "မင်းရဲ့_BOT_TOKEN_ဒီမှာထည့်"
@@ -12,7 +13,7 @@ LANG = {
         "title": "💎 MLBB Diamond ဆိုင်",
         "acc_info": "အကောင့်အချက်အလက်",
         "id": "ဂိမ်း ID", "zone": "Zone ID",
-        "select_pack": "Diamond ပမာဏ ရွေးချယ်ပါ",
+        "select_pack": "Diamond ပမာဏ ရွေးချယ်ပါ (အကွက်ကိုနှိပ်ပါ)",
         "pay_method": "ငွေပေးချေမှုစနစ်",
         "upload": "ငွေလွှဲပြေစာ တင်ပေးပါ",
         "btn": "အခုပဲ ဝယ်ယူမည်",
@@ -23,7 +24,7 @@ LANG = {
         "title": "💎 MLBB Diamond Shop",
         "acc_info": "Account Information",
         "id": "Player ID", "zone": "Zone ID",
-        "select_pack": "Select Diamond Pack",
+        "select_pack": "Select Diamond Pack (Click a card)",
         "pay_method": "Payment Method",
         "upload": "Upload Receipt",
         "btn": "Order Now",
@@ -33,20 +34,19 @@ LANG = {
 }
 
 packs_data = [
-    {"name": "86 Diamonds", "img": "💎", "mmk": 2500, "jpy": 150, "usdt": 1.0},
-    {"name": "172 Diamonds", "img": "🎁", "mmk": 5000, "jpy": 300, "usdt": 2.0},
-    {"name": "257 Diamonds", "img": "🏆", "mmk": 7500, "jpy": 450, "usdt": 3.0},
-    {"name": "706 Diamonds", "img": "👑", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
+    {"name": "86 Diamonds", "mmk": 2500, "jpy": 150, "usdt": 1.0},
+    {"name": "172 Diamonds", "mmk": 5000, "jpy": 300, "usdt": 2.0},
+    {"name": "257 Diamonds", "mmk": 7500, "jpy": 450, "usdt": 3.0},
+    {"name": "706 Diamonds", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
 ]
 
-# --- ၃။ Page Layout ---
-st.set_page_config(page_title="MLBB Shop", page_icon="💎")
+st.set_page_config(page_title="MLBB Shop", page_icon="💎", layout="centered")
 sel_lang = st.sidebar.selectbox("Language / ဘာသာစကား", ["မြန်မာ", "English"])
 t = LANG[sel_lang]
 
 st.title(t["title"])
 
-# ID & Zone ID အကွက်ခွဲခြင်း
+# ID & Zone ID
 st.subheader(t["acc_info"])
 col_id, col_zone = st.columns([3, 1])
 with col_id:
@@ -54,69 +54,48 @@ with col_id:
 with col_zone:
     zone_id = st.text_input(t["zone"], placeholder="1234")
 
-# ငွေကြေးရွေးချယ်မှု (ဈေးနှုန်းတန်းပြောင်းရန်)
+# Currency Selection
 st.subheader(t["pay_method"])
 currency = st.radio("Currency:", ["MMK", "JPY", "USDT"], horizontal=True, label_visibility="collapsed")
 
-# Diamond Packs (Grid UI with Icons)
+# --- Diamond Packs Selection (Active State Design) ---
 st.subheader(t["select_pack"])
-cols = st.columns(2)
-if 'selected_pack' not in st.session_state:
-    st.session_state.selected_pack = packs_data[0]["name"]
+pack_options = [f"{p['name']}\n({p[currency.lower()]} {currency})" for p in packs_data]
 
-for i, pack in enumerate(packs_data):
-    # Currency အလိုက် ဈေးနှုန်းတွက်ချက်ခြင်း
-    price = pack[currency.lower()]
-    price_str = f"{price} {currency}"
-    
-    with cols[i % 2]:
-        with st.container(border=True):
-            st.markdown(f"<h1 style='text-align: center;'>{pack['img']}</h1>", unsafe_allow_html=True)
-            st.markdown(f"<p style='text-align: center;'><b>{pack['name']}</b><br>{price_str}</p>", unsafe_allow_html=True)
-            if st.button(f"Choose {pack['name']}", key=f"btn_{i}", use_container_width=True):
-                st.session_state.selected_pack = pack['name']
-                st.session_state.selected_price = price_str
+selected_raw = option_menu(
+    menu_title=None,
+    options=pack_options,
+    icons=["gem", "gem", "gem", "gem"],
+    orientation="horizontal",
+    styles={
+        "icon": {"color": "#00d4ff", "font-size": "20px"},
+        "nav-link": {"font-size": "11px", "text-align": "center", "border": "0.5px solid #555"},
+        "nav-link-selected": {"background-color": "#023e8a", "color": "white"}
+    }
+)
+selected_pack_name = selected_raw.split("\n")[0]
+selected_price = selected_raw.split("\n")[1]
 
-# ရွေးချယ်ထားသော အထုပ်အား ပြသခြင်း
-if 'selected_pack' in st.session_state:
-    st.info(f"Selected: {st.session_state.selected_pack} ({st.session_state.get('selected_price', '---')})")
-
-# Payment Address Details
-with st.expander("🏦 View Payment Addresses", expanded=True):
-    if currency == "MMK":
-        st.code("KPay: 09 123 456 789 (U Myo Min)", language="text")
-    elif currency == "JPY":
-        st.code("Japan Post: 12345-67890 (MYO MIN)", language="text")
-    else:
-        st.code("USDT (TRC20): TXXXXXXXXXXXXXXXXXXXXX", language="text")
+# Payment Address
+with st.container(border=True):
+    st.markdown(f"*🏦 Transfer to {currency} Address:*")
+    if currency == "MMK": st.code("KPay: 09 123 456 789")
+    elif currency == "JPY": st.code("Japan Post: 12345-67890")
+    else: st.code("USDT (TRC20): TXXXXXXX...")
 
 payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
 
-# --- ၄။ ပို့ဆောင်ခြင်း ---
+# Send Button
 if st.button(t["btn"], use_container_width=True, type="primary"):
     if user_id and zone_id and payment_ss:
-        with st.spinner("Sending..."):
-            caption = (f"📦 *New Order!*\n\n"
-                      f"👤 ID: {user_id} ({zone_id})\n"
-                      f"💎 Pack: {st.session_state.selected_pack}\n"
-                      f"💰 Price: {st.session_state.selected_price}\n"
-                      f"💳 Method: {currency}")
+        with st.spinner("Processing..."):
+            caption = (f"📦 *New Order!*\n\n👤 ID: {user_id} ({zone_id})\n"
+                      f"💎 Pack: {selected_pack_name}\n💰 Price: {selected_price}")
             
             url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
-            reply_markup = {"inline_keyboard": [[
-                {"text": "✅ Approve", "callback_data": "approve"},
-                {"text": "❌ Reject", "callback_data": "reject"}
-            ]]}
+            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown', 'reply_markup': json.dumps({"inline_keyboard": [[{"text": "✅ Approve", "callback_data": "approve"},{"text": "❌ Reject", "callback_data": "reject"}]]})}
+            res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
             
-            files = {'photo': payment_ss.getvalue()}
-            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown', 'reply_markup': json.dumps(reply_markup)}
-            
-            res = requests.post(url, files=files, data=data)
             if res.status_code == 200:
                 st.success(t["success"])
                 st.balloons()
-            else:
-                st.error("Telegram Error!")
-    else:
-        st.error(t["error"])
-
