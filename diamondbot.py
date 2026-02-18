@@ -3,8 +3,8 @@ import requests
 import json
 
 # --- ၁။ CONFIGURATION ---
-BOT_TOKEN = "မင်းရဲ့_BOT_TOKEN_ဒီမှာထည့်"
-ADMIN_CHAT_ID = "မင်းရဲ့_CHAT_ID_ဒီမှာထည့်"
+BOT_TOKEN = "8403531874:AAGZjRK_4xPNZ5igmHRmu5NIuLf8rS1sb-g"
+ADMIN_CHAT_ID = "6826543956"
 
 # --- ၂။ ဘာသာစကား နှင့် ဒေတာများ ---
 LANG = {
@@ -79,7 +79,7 @@ with col_zone:
 
 # --- ၅။ Currency Selection ---
 st.subheader(t["pay_method"])
-currency = st.radio("Currency:", ["MMK", "JPY", "USDT"], horizontal=True, label_visibility="collapsed")
+currency = st.radio("Currency:", ["MMK", "USDT", "JPY"], horizontal=True, label_visibility="collapsed")
 
 # --- ၆။ Diamond Card Grid (တစ်တန်း ၂ ခု) ---
 st.subheader(t["select_pack"])
@@ -134,6 +134,7 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
 
 
 
