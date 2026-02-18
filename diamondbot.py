@@ -10,12 +10,12 @@ ADMIN_CHAT_ID = "မင်းရဲ့_CHAT_ID_ဒီမှာထည့်"
 # --- ၂။ ဘာသာစကား နှင့် ဒေတာများ ---
 LANG = {
     "မြန်မာ": {
-        "title": "💎 MLBB Diamond Shop",
+        "title": "💎 MLBB Diamond ဆိုင်",
         "acc_info": "အကောင့်အချက်အလက်",
         "id": "ဂိမ်း ID", "zone": "Zone ID",
         "select_pack": "Diamond ပမာဏ ရွေးချယ်ပါ",
         "pay_method": "ငွေပေးချေမှုစနစ်",
-        "upload": "ငွေလွှဲပြေစာ (Screenshot) တင်ပေးပါ",
+        "upload": "ငွေလွှဲပြေစာ တင်ပေးပါ",
         "btn": "အခုပဲ ဝယ်ယူမည်",
         "success": "Order တင်ခြင်း အောင်မြင်ပါသည်!",
         "error": "အချက်အလက် ပြည့်စုံအောင် ဖြည့်ပါ!"
@@ -26,7 +26,7 @@ LANG = {
         "id": "Player ID", "zone": "Zone ID",
         "select_pack": "Select Diamond Pack",
         "pay_method": "Payment Method",
-        "upload": "Upload Payment Receipt",
+        "upload": "Upload Receipt",
         "btn": "Order Now",
         "success": "Order Successful!",
         "error": "Please fill all fields!"
@@ -34,20 +34,27 @@ LANG = {
 }
 
 packs_data = [
-    {"name": "86 Diamonds", "mmk": "2,500", "jpy": "150", "usdt": "1.0"},
-    {"name": "172 Diamonds", "mmk": "5,000", "jpy": "300", "usdt": "2.0"},
-    {"name": "257 Diamonds", "mmk": "7,500", "jpy": "450", "usdt": "3.0"},
-    {"name": "706 Diamonds", "mmk": "20,000", "jpy": "1,200", "usdt": "8.0"}
+    {"name": "86 Diamonds", "mmk": 2500, "jpy": 150, "usdt": 1.0},
+    {"name": "172 Diamonds", "mmk": 5000, "jpy": 300, "usdt": 2.0},
+    {"name": "257 Diamonds", "mmk": 7500, "jpy": 450, "usdt": 3.0},
+    {"name": "706 Diamonds", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
 ]
 
-# --- ၃။ Page Layout & Styling ---
 st.set_page_config(page_title="MLBB Shop", page_icon="💎", layout="centered")
 
-# Custom CSS for bigger look
+# CSS နဲ့ Icon တွေရော စာသားတွေရော ကြီးအောင်လုပ်ခြင်း
 st.markdown("""
     <style>
-    .stButton>button { height: 3em; font-size: 20px !important; font-weight: bold; }
-    .stTextInput>div>div>input { font-size: 18px !important; }
+    .nav-link {
+        height: 120px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+    }
+    .stButton>button {
+        height: 3.5em;
+        font-size: 1.2rem !important;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -56,7 +63,7 @@ t = LANG[sel_lang]
 
 st.title(t["title"])
 
-# --- ၄။ Player ID & Zone ID (အကွက်ခွဲ) ---
+# --- ၃။ ID & Zone ID ---
 st.subheader(t["acc_info"])
 col_id, col_zone = st.columns([3, 1])
 with col_id:
@@ -64,95 +71,68 @@ with col_id:
 with col_zone:
     zone_id = st.text_input(t["zone"], placeholder="1234")
 
-# --- ၅။ Currency Selection ---
+# --- ၄။ Currency Selection ---
 st.subheader(t["pay_method"])
 currency = st.radio("Currency:", ["MMK", "JPY", "USDT"], horizontal=True, label_visibility="collapsed")
 
-# --- ၆။ Diamond Packs (အကွက်ကြီးကြီး + Highlight) ---
+# --- ၅။ Diamond Packs Selection (Icon ကြီးကြီး + တစ်တန်း ၂ ခု) ---
 st.subheader(t["select_pack"])
 
-# အကွက်ထဲမှာ ပြမယ့် စာသားစီစဉ်ခြင်း
-options_list = []
-for p in packs_data:
-    price = p[currency.lower()]
-    options_list.append(f"{p['name']}\n{price} {currency}")
+# တစ်တန်း ၂ ခုဖြစ်အောင် options ကို ခွဲလိုက်တာပါ (Grid Style)
+pack_options = [f"{p['name']}\n({p[currency.lower()]} {currency})" for p in packs_data]
 
-# Grid ပုံစံ Icon Menu
 selected_raw = option_menu(
     menu_title=None,
-    options=options_list,
+    options=pack_options,
     icons=["gem", "gem", "gem", "gem"],
     orientation="horizontal",
     styles={
         "container": {"padding": "0!important", "background-color": "transparent"},
-        "icon": {"color": "#00d4ff", "font-size": "25px"},
+        "icon": {"color": "#00d4ff", "font-size": "35px"}, # Icon ကို ကြီးလိုက်တာပါ
         "nav-link": {
             "font-size": "14px", 
             "text-align": "center", 
             "margin": "10px", 
-            "height": "100px", # အကွက်ကို အမြင့်ကြီးပေးထားသည်
-            "display": "flex",
-            "flex-direction": "column",
-            "justify-content": "center",
-            "border": "1px solid #444",
-            "border-radius": "15px"
+            "border": "1px solid #555",
+            "border-radius": "15px",
+            "flex": "0 0 45%" # ဒီနေရာက တစ်တန်းကို ၂ ခု ဖြစ်အောင် ထိန်းပေးတာပါ
         },
-        "nav-link-selected": {
-            "background-color": "#023e8a", 
-            "color": "white",
-            "border": "2px solid #00d4ff"
-        }
+        "nav-link-selected": {"background-color": "#023e8a", "color": "white", "border": "2px solid #00d4ff"}
     }
 )
 
-# ရွေးထားတဲ့ Data ကို ခွဲထုတ်ခြင်း
 selected_pack_name = selected_raw.split("\n")[0]
 selected_price = selected_raw.split("\n")[1]
 
-# --- ၇။ Payment Address Details ---
-st.markdown("---")
+# --- ၆။ Payment Address ---
 with st.container(border=True):
-    st.markdown(f"### 🏦 Transfer to {currency}")
-    if currency == "MMK":
-        st.code("KPay/Wave: 09 123 456 789\nName: U Myo Min", language="text")
-    elif currency == "JPY":
-        st.code("Japan Post: 12345-67890\nName: MYO MIN", language="text")
-    else:
-        st.code("USDT (TRC20):\nTXXXXXXXXXXXXXXXXXXXXXXXXX", language="text")
+    st.markdown(f"*🏦 Transfer to {currency} Address:*")
+    if currency == "MMK": st.code("KPay: 09 123 456 789")
+    elif currency == "JPY": st.code("Japan Post: 12345-67890")
+    else: st.code("USDT (TRC20): TXXXXXXXXXXXXXXXX")
 
 payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
 
-# --- ၈။ Submit Button ---
+# --- ၇။ Send Button ---
 if st.button(t["btn"], use_container_width=True, type="primary"):
     if user_id and zone_id and payment_ss:
         with st.spinner("Processing..."):
-            # Telegram Caption
-            caption = (f"📦 *New Order!*\n\n"
-                      f"👤 ID: {user_id} ({zone_id})\n"
-                      f"💎 Pack: {selected_pack_name}\n"
-                      f"💰 Price: {selected_price}\n"
-                      f"💳 Method: {currency}")
+            caption = (f"📦 *New Order!*\n\n👤 ID: {user_id} ({zone_id})\n"
+                      f"💎 Pack: {selected_pack_name}\n💰 Price: {selected_price}")
             
-            # Send to Telegram
             url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
-            data = {
-                'chat_id': ADMIN_CHAT_ID, 
-                'caption': caption, 
-                'parse_mode': 'Markdown',
-                'reply_markup': json.dumps({
-                    "inline_keyboard": [[
-                        {"text": "✅ Approve", "callback_data": "approve"},
-                        {"text": "❌ Reject", "callback_data": "reject"}
-                    ]]
-                })
-            }
-            files = {'photo': payment_ss.getvalue()}
+            reply_markup = {"inline_keyboard": [[
+                {"text": "✅ Approve", "callback_data": "approve"},
+                {"text": "❌ Reject", "callback_data": "reject"}
+            ]]}
             
-            res = requests.post(url, files=files, data=data)
+            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown', 'reply_markup': json.dumps(reply_markup)}
+            res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
+            
             if res.status_code == 200:
                 st.success(t["success"])
                 st.balloons()
             else:
-                st.error("Connection Error! Check Token/ChatID.")
+                st.error("Error: Check Token or Chat ID")
     else:
         st.error(t["error"])
