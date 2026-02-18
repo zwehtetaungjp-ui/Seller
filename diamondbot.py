@@ -32,7 +32,6 @@ LANG = {
     }
 }
 
-# Diamond packs data (ဈေးနှုန်းများကို currency အလိုက် ခွဲထားသည်)
 packs_data = [
     {"name": "86 Diamonds", "icon": "💎", "mmk": 2500, "jpy": 150, "usdt": 1.0},
     {"name": "172 Diamonds", "icon": "🎁", "mmk": 5000, "jpy": 300, "usdt": 2.0},
@@ -47,20 +46,19 @@ st.markdown("""
     <style>
     div.stButton > button {
         width: 100%;
-        height: 120px;
+        height: 150px;
         border-radius: 15px;
-        border: 1px solid #555;
+        border: 1px solid #ddd;
         font-size: 18px !important;
-        white-space: pre-line; /* စာသားတွေကို အောက်ကြောင်းဆင်းပေးရန် */
+        white-space: pre-line;
     }
-    div.stButton > button:hover {
-        border: 2px solid #00d4ff;
-        background-color: #1e1e1e;
+    div.stButton > button:active, div.stButton > button:focus {
+        border: 3px solid #007bff !important;
+        background-color: #e7f3ff !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# State ကို သိမ်းဖို့ initialization
 if 'selected_pack' not in st.session_state:
     st.session_state.selected_pack = None
 if 'selected_price' not in st.session_state:
@@ -90,21 +88,20 @@ cols = st.columns(2)
 for i, pack in enumerate(packs_data):
     price_val = pack[currency.lower()]
     price_display = f"{price_val} {currency}"
-    label = f"{pack['icon']}\n{pack['name']}\n{price_display}"
+    label = f"{pack['icon']}\n\n{pack['name']}\n{price_display}"
     
     with cols[i % 2]:
         if st.button(label, key=f"pack_{i}"):
             st.session_state.selected_pack = pack['name']
             st.session_state.selected_price = price_display
 
-# ရွေးထားတာရှိရင် အောက်မှာ ပြပေးမယ်
 if st.session_state.selected_pack:
     st.success(f"Selected: *{st.session_state.selected_pack}* ({st.session_state.selected_price})")
 
 # --- ၇။ Payment & Upload ---
 st.markdown("---")
 with st.container(border=True):
-    st.markdown(f* Transfer to {currency} Address:**")
+    st.markdown(f"*Transfer to {currency} Address:*")
     if currency == "MMK": st.code("KPay: 09 123 456 789")
     elif currency == "JPY": st.code("Japan Post: 12345-67890")
     else: st.code("USDT (TRC20): TXXXXXXXXXXXXXXXX")
@@ -115,7 +112,7 @@ payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
 if st.button(t["btn"], use_container_width=True, type="primary"):
     if user_id and zone_id and payment_ss and st.session_state.selected_pack:
         with st.spinner("Processing..."):
-            caption = (f"📦 *New Order!*\n\n"
+            caption = (f"📦 New Order!\n\n"
                       f"👤 ID: {user_id} ({zone_id})\n"
                       f"💎 Pack: {st.session_state.selected_pack}\n"
                       f"💰 Price: {st.session_state.selected_price}\n"
@@ -127,7 +124,7 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 {"text": "❌ Reject", "callback_data": "reject"}
             ]]}
             
-            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown', 'reply_markup': json.dumps(reply_markup)}
+            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'reply_markup': json.dumps(reply_markup)}
             res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
             
             if res.status_code == 200:
@@ -137,4 +134,3 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
-
