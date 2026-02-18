@@ -37,6 +37,8 @@ packs_data = [
     {"name": "172 Diamonds", "big-icon": "🎁", "mmk": 5000, "jpy": 300, "usdt": 2.0},
     {"name": "257 Diamonds", "big-icon": "🏆", "mmk": 7500, "jpy": 450, "usdt": 3.0},
     {"name": "706 Diamonds", "big-icon": "👑", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
+    {"name": "706 Diamonds", "big-icon": "👑", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
+    {"name": "706 Diamonds", "big-icon": "👑", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
 ]
 
 # --- ၃။ Page Setup & Custom CSS ---
@@ -134,6 +136,7 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
 
 
 
