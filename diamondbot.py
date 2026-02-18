@@ -13,7 +13,7 @@ LANG = {
         "title": "💎 MLBB Diamond ဆိုင်",
         "acc_info": "အကောင့်အချက်အလက်",
         "id": "ဂိမ်း ID", "zone": "Zone ID",
-        "select_pack": "Diamond ပမာဏ ရွေးချယ်ပါ",
+        "select_pack": "Diamond ပမာဏ ရွေးချယ်ပါ (အကွက်ကိုနှိပ်ပါ)",
         "pay_method": "ငွေပေးချေမှုစနစ်",
         "upload": "ငွေလွှဲပြေစာ တင်ပေးပါ",
         "btn": "အခုပဲ ဝယ်ယူမည်",
@@ -24,7 +24,7 @@ LANG = {
         "title": "💎 MLBB Diamond Shop",
         "acc_info": "Account Information",
         "id": "Player ID", "zone": "Zone ID",
-        "select_pack": "Select Diamond Pack",
+        "select_pack": "Select Diamond Pack (Click a card)",
         "pay_method": "Payment Method",
         "upload": "Upload Receipt",
         "btn": "Order Now",
@@ -41,29 +41,12 @@ packs_data = [
 ]
 
 st.set_page_config(page_title="MLBB Shop", page_icon="💎", layout="centered")
-
-# CSS နဲ့ Icon တွေရော စာသားတွေရော ကြီးအောင်လုပ်ခြင်း
-st.markdown("""
-    <style>
-    .nav-link {
-        height: 120px !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-    }
-    .stButton>button {
-        height: 3.5em;
-        font-size: 1.2rem !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
 sel_lang = st.sidebar.selectbox("Language / ဘာသာစကား", ["မြန်မာ", "English"])
 t = LANG[sel_lang]
 
 st.title(t["title"])
 
-# --- ၃။ ID & Zone ID ---
+# ID & Zone ID
 st.subheader(t["acc_info"])
 col_id, col_zone = st.columns([3, 1])
 with col_id:
@@ -71,14 +54,12 @@ with col_id:
 with col_zone:
     zone_id = st.text_input(t["zone"], placeholder="1234")
 
-# --- ၄။ Currency Selection ---
+# Currency Selection
 st.subheader(t["pay_method"])
 currency = st.radio("Currency:", ["MMK", "JPY", "USDT"], horizontal=True, label_visibility="collapsed")
 
-# --- ၅။ Diamond Packs Selection (Icon ကြီးကြီး + တစ်တန်း ၂ ခု) ---
+# --- Diamond Packs Selection (Active State Design) ---
 st.subheader(t["select_pack"])
-
-# တစ်တန်း ၂ ခုဖြစ်အောင် options ကို ခွဲလိုက်တာပါ (Grid Style)
 pack_options = [f"{p['name']}\n({p[currency.lower()]} {currency})" for p in packs_data]
 
 selected_raw = option_menu(
@@ -87,33 +68,24 @@ selected_raw = option_menu(
     icons=["gem", "gem", "gem", "gem"],
     orientation="horizontal",
     styles={
-        "container": {"padding": "0!important", "background-color": "transparent"},
-        "icon": {"color": "#00d4ff", "font-size": "35px"}, # Icon ကို ကြီးလိုက်တာပါ
-        "nav-link": {
-            "font-size": "14px", 
-            "text-align": "center", 
-            "margin": "10px", 
-            "border": "1px solid #555",
-            "border-radius": "15px",
-            "flex": "0 0 45%" # ဒီနေရာက တစ်တန်းကို ၂ ခု ဖြစ်အောင် ထိန်းပေးတာပါ
-        },
-        "nav-link-selected": {"background-color": "#023e8a", "color": "white", "border": "2px solid #00d4ff"}
+        "icon": {"color": "#00d4ff", "font-size": "20px"},
+        "nav-link": {"font-size": "11px", "text-align": "center", "border": "0.5px solid #555"},
+        "nav-link-selected": {"background-color": "#023e8a", "color": "white"}
     }
 )
-
 selected_pack_name = selected_raw.split("\n")[0]
 selected_price = selected_raw.split("\n")[1]
 
-# --- ၆။ Payment Address ---
+# Payment Address
 with st.container(border=True):
     st.markdown(f"*🏦 Transfer to {currency} Address:*")
     if currency == "MMK": st.code("KPay: 09 123 456 789")
     elif currency == "JPY": st.code("Japan Post: 12345-67890")
-    else: st.code("USDT (TRC20): TXXXXXXXXXXXXXXXX")
+    else: st.code("USDT (TRC20): TXXXXXXX...")
 
 payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
 
-# --- ၇။ Send Button ---
+# Send Button
 if st.button(t["btn"], use_container_width=True, type="primary"):
     if user_id and zone_id and payment_ss:
         with st.spinner("Processing..."):
@@ -121,18 +93,9 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                       f"💎 Pack: {selected_pack_name}\n💰 Price: {selected_price}")
             
             url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
-            reply_markup = {"inline_keyboard": [[
-                {"text": "✅ Approve", "callback_data": "approve"},
-                {"text": "❌ Reject", "callback_data": "reject"}
-            ]]}
-            
-            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown', 'reply_markup': json.dumps(reply_markup)}
+            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown', 'reply_markup': json.dumps({"inline_keyboard": [[{"text": "✅ Approve", "callback_data": "approve"},{"text": "❌ Reject", "callback_data": "reject"}]]})}
             res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
             
             if res.status_code == 200:
                 st.success(t["success"])
                 st.balloons()
-            else:
-                st.error("Error: Check Token or Chat ID")
-    else:
-        st.error(t["error"])
