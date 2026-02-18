@@ -2,8 +2,8 @@ import streamlit as st
 import requests
 
 # --- CONFIGURATION ---
-BOT_TOKEN = "မင်းရဲ့_BOT_TOKEN_ဒီမှာထည့်ပါ"
-ADMIN_CHAT_ID = "မင်းရဲ့_CHAT_ID_ဒီမှာထည့်ပါ"
+BOT_TOKEN = "8403531874:AAGZjRK_4xPNZ5igmHRmu5NIuLf8rS1sb-g"
+ADMIN_CHAT_ID = "6826543956"
 
 def send_to_telegram(caption, image_file):
     # Telegram API သုံးပြီး ပုံနဲ့စာကို လှမ်းပို့တဲ့ Function
@@ -45,4 +45,5 @@ if st.button("အခုပဲ ဝယ်ယူမည်"):
             else:
                 st.error("Error: Telegram ဆီသို့ အချက်အလက် ပို့၍မရပါ။")
     else:
+
         st.warning("ID နှင့် Screenshot ကို ပြည့်စုံအောင် ထည့်ပေးပါ။")
