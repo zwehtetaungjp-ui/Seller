@@ -104,7 +104,7 @@ if st.session_state.selected_pack:
 # --- ၇။ Payment & Upload ---
 st.markdown("---")
 with st.container(border=True):
-    st.markdown(f*🏦 Transfer to {currency} Address:**")
+    st.markdown(f* Transfer to {currency} Address:**")
     if currency == "MMK": st.code("KPay: 09 123 456 789")
     elif currency == "JPY": st.code("Japan Post: 12345-67890")
     else: st.code("USDT (TRC20): TXXXXXXXXXXXXXXXX")
@@ -137,3 +137,4 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
