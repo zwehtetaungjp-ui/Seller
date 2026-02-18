@@ -6,13 +6,26 @@ BOT_TOKEN = "8403531874:AAGZjRK_4xPNZ5igmHRmu5NIuLf8rS1sb-g"
 ADMIN_CHAT_ID = "6826543956"
 
 def send_to_telegram(caption, image_file):
-    # Telegram API သုံးပြီး ပုံနဲ့စာကို လှမ်းပို့တဲ့ Function
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+    
+    # Inline Keyboard Buttons ထည့်ခြင်း
+    reply_markup = {
+        "inline_keyboard": [[
+            {"text": "✅ Approve", "callback_data": "approve"},
+            {"text": "❌ Reject", "callback_data": "reject"}
+        ]]
+    }
+    
     files = {'photo': image_file.getvalue()}
-    data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown'}
+    data = {
+        'chat_id': ADMIN_CHAT_ID, 
+        'caption': caption, 
+        'parse_mode': 'Markdown',
+        'reply_markup': json.dumps(reply_markup) # JSON ပုံစံနဲ့ ပို့ရမယ်
+    }
+    
     response = requests.post(url, files=files, data=data)
     return response.json()
-
 # --- UI DESIGN ---
 st.set_page_config(page_title="MLBB Diamond Shop", layout="centered")
 
@@ -47,3 +60,4 @@ if st.button("အခုပဲ ဝယ်ယူမည်"):
     else:
 
         st.warning("ID နှင့် Screenshot ကို ပြည့်စုံအောင် ထည့်ပေးပါ။")
+
