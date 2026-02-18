@@ -32,21 +32,46 @@ LANG = {
     }
 }
 
+# Diamond packs data (ဈေးနှုန်းများကို currency အလိုက် ခွဲထားသည်)
 packs_data = [
-    {"name": "86 Diamonds", "img": "💎", "mmk": 2500, "jpy": 150, "usdt": 1.0},
-    {"name": "172 Diamonds", "img": "🎁", "mmk": 5000, "jpy": 300, "usdt": 2.0},
-    {"name": "257 Diamonds", "img": "🏆", "mmk": 7500, "jpy": 450, "usdt": 3.0},
-    {"name": "706 Diamonds", "img": "👑", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
+    {"name": "86 Diamonds", "icon": "💎", "mmk": 2500, "jpy": 150, "usdt": 1.0},
+    {"name": "172 Diamonds", "icon": "🎁", "mmk": 5000, "jpy": 300, "usdt": 2.0},
+    {"name": "257 Diamonds", "icon": "🏆", "mmk": 7500, "jpy": 450, "usdt": 3.0},
+    {"name": "706 Diamonds", "icon": "👑", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
 ]
 
-# --- ၃။ Page Layout ---
-st.set_page_config(page_title="MLBB Shop", page_icon="💎")
+# --- ၃။ Page Setup & Custom CSS ---
+st.set_page_config(page_title="MLBB Shop", page_icon="💎", layout="centered")
+
+st.markdown("""
+    <style>
+    div.stButton > button {
+        width: 100%;
+        height: 120px;
+        border-radius: 15px;
+        border: 1px solid #555;
+        font-size: 18px !important;
+        white-space: pre-line; /* စာသားတွေကို အောက်ကြောင်းဆင်းပေးရန် */
+    }
+    div.stButton > button:hover {
+        border: 2px solid #00d4ff;
+        background-color: #1e1e1e;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# State ကို သိမ်းဖို့ initialization
+if 'selected_pack' not in st.session_state:
+    st.session_state.selected_pack = None
+if 'selected_price' not in st.session_state:
+    st.session_state.selected_price = None
+
 sel_lang = st.sidebar.selectbox("Language / ဘာသာစကား", ["မြန်မာ", "English"])
 t = LANG[sel_lang]
 
 st.title(t["title"])
 
-# ID & Zone ID အကွက်ခွဲခြင်း
+# --- ၄။ Account Info ---
 st.subheader(t["acc_info"])
 col_id, col_zone = st.columns([3, 1])
 with col_id:
@@ -54,48 +79,42 @@ with col_id:
 with col_zone:
     zone_id = st.text_input(t["zone"], placeholder="1234")
 
-# ငွေကြေးရွေးချယ်မှု (ဈေးနှုန်းတန်းပြောင်းရန်)
+# --- ၅။ Currency Selection ---
 st.subheader(t["pay_method"])
 currency = st.radio("Currency:", ["MMK", "JPY", "USDT"], horizontal=True, label_visibility="collapsed")
 
-# Diamond Packs (Grid UI with Icons)
+# --- ၆။ Diamond Card Grid (တစ်တန်း ၂ ခု) ---
 st.subheader(t["select_pack"])
 cols = st.columns(2)
-if 'selected_pack' not in st.session_state:
-    st.session_state.selected_pack = packs_data[0]["name"]
 
 for i, pack in enumerate(packs_data):
-    # Currency အလိုက် ဈေးနှုန်းတွက်ချက်ခြင်း
-    price = pack[currency.lower()]
-    price_str = f"{price} {currency}"
+    price_val = pack[currency.lower()]
+    price_display = f"{price_val} {currency}"
+    label = f"{pack['icon']}\n{pack['name']}\n{price_display}"
     
     with cols[i % 2]:
-        with st.container(border=True):
-            st.markdown(f"<h1 style='text-align: center;'>{pack['img']}</h1>", unsafe_allow_html=True)
-            st.markdown(f"<p style='text-align: center;'><b>{pack['name']}</b><br>{price_str}</p>", unsafe_allow_html=True)
-            if st.button(f"Choose {pack['name']}", key=f"btn_{i}", use_container_width=True):
-                st.session_state.selected_pack = pack['name']
-                st.session_state.selected_price = price_str
+        if st.button(label, key=f"pack_{i}"):
+            st.session_state.selected_pack = pack['name']
+            st.session_state.selected_price = price_display
 
-# ရွေးချယ်ထားသော အထုပ်အား ပြသခြင်း
-if 'selected_pack' in st.session_state:
-    st.info(f"Selected: {st.session_state.selected_pack} ({st.session_state.get('selected_price', '---')})")
+# ရွေးထားတာရှိရင် အောက်မှာ ပြပေးမယ်
+if st.session_state.selected_pack:
+    st.success(f"Selected: *{st.session_state.selected_pack}* ({st.session_state.selected_price})")
 
-# Payment Address Details
-with st.expander("🏦 View Payment Addresses", expanded=True):
-    if currency == "MMK":
-        st.code("KPay: 09 123 456 789 (U Myo Min)", language="text")
-    elif currency == "JPY":
-        st.code("Japan Post: 12345-67890 (MYO MIN)", language="text")
-    else:
-        st.code("USDT (TRC20): TXXXXXXXXXXXXXXXXXXXXX", language="text")
+# --- ၇။ Payment & Upload ---
+st.markdown("---")
+with st.container(border=True):
+    st.markdown(f*🏦 Transfer to {currency} Address:**")
+    if currency == "MMK": st.code("KPay: 09 123 456 789")
+    elif currency == "JPY": st.code("Japan Post: 12345-67890")
+    else: st.code("USDT (TRC20): TXXXXXXXXXXXXXXXX")
 
 payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
 
-# --- ၄။ ပို့ဆောင်ခြင်း ---
+# --- ၈။ Final Submit ---
 if st.button(t["btn"], use_container_width=True, type="primary"):
-    if user_id and zone_id and payment_ss:
-        with st.spinner("Sending..."):
+    if user_id and zone_id and payment_ss and st.session_state.selected_pack:
+        with st.spinner("Processing..."):
             caption = (f"📦 *New Order!*\n\n"
                       f"👤 ID: {user_id} ({zone_id})\n"
                       f"💎 Pack: {st.session_state.selected_pack}\n"
@@ -108,15 +127,13 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 {"text": "❌ Reject", "callback_data": "reject"}
             ]]}
             
-            files = {'photo': payment_ss.getvalue()}
             data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown', 'reply_markup': json.dumps(reply_markup)}
+            res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
             
-            res = requests.post(url, files=files, data=data)
             if res.status_code == 200:
                 st.success(t["success"])
                 st.balloons()
             else:
-                st.error("Telegram Error!")
+                st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
-
