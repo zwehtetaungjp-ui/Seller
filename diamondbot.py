@@ -29,7 +29,7 @@ selected_pack = option_menu(
 
 # ၃။ Payment Method (Crypto, Yen, MMK)
 st.subheader(t["pay"])
-pay_method = st.radio("Choose Method:", ["USDT (Crypto)", "JPY (Yen)", "MMK (KPay)"], horizontal=True)
+pay_method = st.radio("Choose Method:", ["USDT (Crypto)", "MMK (KPay)", "JPY (Yen)"], horizontal=True)
 
 with st.expander("💳 Payment Address (ငွေလွှဲရန်လိပ်စာ)", expanded=True):
     if pay_method == "USDT (Crypto)":
@@ -44,3 +44,4 @@ payment_ss = st.file_uploader("Upload Receipt", type=['jpg', 'png'])
 if st.button(t["btn"], use_container_width=True, type="primary"):
     # Telegram သို့ ပို့မည့် ကုဒ်များ (ယခင်အတိုင်း)
     st.success("Sent to Admin!")
+
