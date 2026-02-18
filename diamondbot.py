@@ -4,6 +4,7 @@ import json
 from streamlit_option_menu import option_menu
 
 # --- ၁။ CONFIGURATION ---
+# @BotFather မှရသော Token နှင့် @userinfobot မှရသော ID ကို ဤနေရာတွင် ထည့်ပါ
 BOT_TOKEN = "မင်းရဲ့_BOT_TOKEN_ဒီမှာထည့်"
 ADMIN_CHAT_ID = "မင်းရဲ့_CHAT_ID_ဒီမှာထည့်"
 
@@ -15,7 +16,7 @@ LANG = {
         "id": "ဂိမ်း ID", "zone": "Zone ID",
         "select_pack": "Diamond ပမာဏ ရွေးချယ်ပါ",
         "pay_method": "ငွေပေးချေမှုစနစ်",
-        "upload": "ငွေလွှဲပြေစာ တင်ပေးပါ",
+        "upload": "ငွေလွှဲပြေစာ (Screenshot) တင်ပေးပါ",
         "btn": "အခုပဲ ဝယ်ယူမည်",
         "success": "Order တင်ခြင်း အောင်မြင်ပါသည်!",
         "error": "အချက်အလက် ပြည့်စုံအောင် ဖြည့်ပါ!"
@@ -34,15 +35,16 @@ LANG = {
 }
 
 packs_data = [
-    {"name": "86 Diamonds", "mmk": 2500, "jpy": 150, "usdt": 1.0},
-    {"name": "172 Diamonds", "mmk": 5000, "jpy": 300, "usdt": 2.0},
-    {"name": "257 Diamonds", "mmk": 7500, "jpy": 450, "usdt": 3.0},
-    {"name": "706 Diamonds", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
+    {"name": "275 Diamonds", "mmk": 8500, "jpy": 450, "usdt": 3.0},
+    {"name": "565 Diamonds", "mmk": 16500, "jpy": 850, "usdt": 6.0},
+    {"name": "1155 Diamonds", "mmk": 32000, "jpy": 1650, "usdt": 12.0},
+    {"name": "1765 Diamonds", "mmk": 48000, "jpy": 2500, "usdt": 18.0}
 ]
 
+# --- ၃။ Page Setup & CSS Styling ---
 st.set_page_config(page_title="MLBB Shop", page_icon="💎", layout="centered")
 
-# CSS နဲ့ Icon တွေရော စာသားတွေရော ကြီးအောင်လုပ်ခြင်း
+# CSS: တစ်တန်း ၂ ခု (Grid) နှင့် Icon ကြီးကြီး ဖြစ်အောင် ပြင်ဆင်ခြင်း
 st.markdown("""
     <style>
     .nav-link {
@@ -50,10 +52,12 @@ st.markdown("""
         display: flex !important;
         flex-direction: column !important;
         justify-content: center !important;
+        flex: 0 0 45% !important; /* တစ်တန်း ၂ ခု ဖြစ်စေရန် */
+        margin: 5px !important;
     }
     .stButton>button {
         height: 3.5em;
-        font-size: 1.2rem !important;
+        font-weight: bold;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -63,7 +67,7 @@ t = LANG[sel_lang]
 
 st.title(t["title"])
 
-# --- ၃။ ID & Zone ID ---
+# --- ၄။ Player ID & Zone ID ---
 st.subheader(t["acc_info"])
 col_id, col_zone = st.columns([3, 1])
 with col_id:
@@ -71,14 +75,12 @@ with col_id:
 with col_zone:
     zone_id = st.text_input(t["zone"], placeholder="1234")
 
-# --- ၄။ Currency Selection ---
+# --- ၅။ Currency Selection ---
 st.subheader(t["pay_method"])
 currency = st.radio("Currency:", ["MMK", "JPY", "USDT"], horizontal=True, label_visibility="collapsed")
 
-# --- ၅။ Diamond Packs Selection (Icon ကြီးကြီး + တစ်တန်း ၂ ခု) ---
+# --- ၆။ Diamond Packs Selection (Active State Design) ---
 st.subheader(t["select_pack"])
-
-# တစ်တန်း ၂ ခုဖြစ်အောင် options ကို ခွဲလိုက်တာပါ (Grid Style)
 pack_options = [f"{p['name']}\n({p[currency.lower()]} {currency})" for p in packs_data]
 
 selected_raw = option_menu(
@@ -88,23 +90,20 @@ selected_raw = option_menu(
     orientation="horizontal",
     styles={
         "container": {"padding": "0!important", "background-color": "transparent"},
-        "icon": {"color": "#00d4ff", "font-size": "35px"}, # Icon ကို ကြီးလိုက်တာပါ
+        "icon": {"color": "#00d4ff", "font-size": "35px"}, # Icon အကြီး
         "nav-link": {
-            "font-size": "14px", 
+            "font-size": "13px", 
             "text-align": "center", 
-            "margin": "10px", 
             "border": "1px solid #555",
-            "border-radius": "15px",
-            "flex": "0 0 45%" # ဒီနေရာက တစ်တန်းကို ၂ ခု ဖြစ်အောင် ထိန်းပေးတာပါ
+            "border-radius": "15px"
         },
         "nav-link-selected": {"background-color": "#023e8a", "color": "white", "border": "2px solid #00d4ff"}
     }
 )
-
 selected_pack_name = selected_raw.split("\n")[0]
 selected_price = selected_raw.split("\n")[1]
 
-# --- ၆။ Payment Address ---
+# --- ၇။ Payment Address ---
 with st.container(border=True):
     st.markdown(f"*🏦 Transfer to {currency} Address:*")
     if currency == "MMK": st.code("KPay: 09 123 456 789")
@@ -113,12 +112,14 @@ with st.container(border=True):
 
 payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
 
-# --- ၇။ Send Button ---
+# --- ၈။ Send Button ---
 if st.button(t["btn"], use_container_width=True, type="primary"):
     if user_id and zone_id and payment_ss:
         with st.spinner("Processing..."):
-            caption = (f"📦 *New Order!*\n\n👤 ID: {user_id} ({zone_id})\n"
-                      f"💎 Pack: {selected_pack_name}\n💰 Price: {selected_price}")
+            caption = (f"📦 *New Order!*\n\n"
+                      f"👤 ID: {user_id} ({zone_id})\n"
+                      f"💎 Pack: {selected_pack_name}\n"
+                      f"💰 Price: {selected_price}")
             
             url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
             reply_markup = {"inline_keyboard": [[
@@ -126,13 +127,21 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 {"text": "❌ Reject", "callback_data": "reject"}
             ]]}
             
-            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown', 'reply_markup': json.dumps(reply_markup)}
-            res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
+            data = {
+                'chat_id': ADMIN_CHAT_ID, 
+                'caption': caption, 
+                'parse_mode': 'Markdown', 
+                'reply_markup': json.dumps(reply_markup)
+            }
             
-            if res.status_code == 200:
-                st.success(t["success"])
-                st.balloons()
-            else:
-                st.error("Error: Check Token or Chat ID")
+            try:
+                res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
+                if res.status_code == 200:
+                    st.success(t["success"])
+                    st.balloons()
+                else:
+                    st.error(f"Telegram Error: {res.text}")
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
     else:
         st.error(t["error"])
