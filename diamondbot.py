@@ -34,9 +34,9 @@ LANG = {
 
 packs_data = [
     {"name": "86 Diamonds", "big-icon": "💎", "mmk": 2500, "jpy": 150, "usdt": 1.0},
-    {"name": "172 Diamonds", "icon": "🎁", "mmk": 5000, "jpy": 300, "usdt": 2.0},
-    {"name": "257 Diamonds", "icon": "🏆", "mmk": 7500, "jpy": 450, "usdt": 3.0},
-    {"name": "706 Diamonds", "icon": "👑", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
+    {"name": "172 Diamonds", "big-icon": "🎁", "mmk": 5000, "jpy": 300, "usdt": 2.0},
+    {"name": "257 Diamonds", "big-icon": "🏆", "mmk": 7500, "jpy": 450, "usdt": 3.0},
+    {"name": "706 Diamonds", "big-icon": "👑", "mmk": 20000, "jpy": 1200, "usdt": 8.0}
 ]
 
 # --- ၃။ Page Setup & Custom CSS ---
@@ -88,7 +88,7 @@ cols = st.columns(2)
 for i, pack in enumerate(packs_data):
     price_val = pack[currency.lower()]
     price_display = f"{price_val} {currency}"
-    label = f"{pack['icon']}\n\n{pack['name']}\n{price_display}"
+    label = f"{pack['big-icon']}\n\n{pack['name']}\n{price_display}"
     
     with cols[i % 2]:
         if st.button(label, key=f"pack_{i}"):
@@ -134,6 +134,7 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
 
 
 
