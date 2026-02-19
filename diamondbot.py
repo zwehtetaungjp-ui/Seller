@@ -49,11 +49,11 @@ LANG = {
 packs_data = [
     {"name": "Weekly Diamond Pass", "icon": "🎟️", "mmk": 2500, "jpy": 150, "usdt": 1.0},
     {"name": "Starlight Pass", "icon": "🌟", "mmk": 7500, "jpy": 450, "usdt": 3.2},
-    {"name": "275 Diamonds", "icon": "💎", "mmk": 8500, "jpy": 480, "usdt": 3.3},
-    {"name": "565 Diamonds", "icon": "🎁", "mmk": 16500, "jpy": 950, "usdt": 6.5},
-    {"name": "1155 Diamonds", "icon": "📦", "mmk": 32000, "jpy": 1850, "usdt": 12.8},
-    {"name": "1765 Diamonds", "icon": "🏆", "mmk": 48000, "jpy": 2800, "usdt": 19.5},
-    {"name": "2975 Diamonds", "icon": "👜", "mmk": 82000, "jpy": 4700, "usdt": 32.5},
+    {"name": "86 Diamonds", "icon": "💎", "mmk": 4900, "jpy": 480, "usdt": 3.3},
+    {"name": "172 Diamonds", "icon": "🎁", "mmk": 9600, "jpy": 950, "usdt": 6.5},
+    {"name": "257 Diamonds", "icon": "📦", "mmk": 13900, "jpy": 1850, "usdt": 12.8},
+    {"name": "343 Diamonds", "icon": "🏆", "mmk": 18800, "jpy": 2800, "usdt": 19.5},
+    {"name": "429 Diamonds", "icon": "👜", "mmk": 82000, "jpy": 4700, "usdt": 32.5},
     {"name": "6000 Diamonds", "icon": "👑", "mmk": 160000, "jpy": 9200, "usdt": 63.0}
 ]
 
@@ -157,5 +157,6 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
 
 
