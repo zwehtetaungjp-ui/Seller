@@ -3,7 +3,6 @@ import requests
 import json
 
 # --- ၁။ CONFIGURATION ---
-# @BotFather မှရသော Token နှင့် @userinfobot မှရသော ID ကို ဤနေရာတွင် ထည့်ပါ
 BOT_TOKEN = "မင်းရဲ့_BOT_TOKEN_ဒီမှာထည့်"
 ADMIN_CHAT_ID = "မင်းရဲ့_CHAT_ID_ဒီမှာထည့်"
 
@@ -18,7 +17,8 @@ LANG = {
         "upload": "ငွေလွှဲပြေစာ တင်ပေးပါ",
         "btn": "အခုပဲ ဝယ်ယူမည်",
         "success": "Order တင်ခြင်း အောင်မြင်ပါသည်!",
-        "error": "အချက်အလက် ပြည့်စုံအောင် ဖြည့်ပါ!"
+        "error": "အချက်အလက် ပြည့်စုံအောင် ဖြည့်ပါ!",
+        "curr_label": "ငွေကြေးရွေးချယ်ရန်"
     },
     "English": {
         "title": "💎 MLBB Diamond Shop",
@@ -29,7 +29,20 @@ LANG = {
         "upload": "Upload Receipt",
         "btn": "Order Now",
         "success": "Order Successful!",
-        "error": "Please fill all fields!"
+        "error": "Please fill all fields!",
+        "curr_label": "Select Currency"
+    },
+    "日本語": {
+        "title": "💎 MLBB ダイヤショップ",
+        "acc_info": "アカウント情報",
+        "id": "プレイヤーID", "zone": "ゾーンID",
+        "select_pack": "パックを選択してください",
+        "pay_method": "支払い方法",
+        "upload": "振込明細書（レシート）をアップロード",
+        "btn": "今すぐ購入",
+        "success": "注文が完了しました！",
+        "error": "すべての項目を入力してください！",
+        "curr_label": "通貨を選択"
     }
 }
 
@@ -44,13 +57,18 @@ packs_data = [
     {"name": "6000 Diamonds", "icon": "👑", "mmk": 160000, "jpy": 9200, "usdt": 63.0}
 ]
 
-# --- ၃။ Page Setup & CSS Styling ---
+# --- ၃။ Page Setup & Styling ---
 st.set_page_config(page_title="MLBB Shop", page_icon="💎", layout="centered")
 
+# CSS: Language Selector ကို ညာဘက်အပေါ်မှာထားခြင်းနှင့် Button Styling
 st.markdown("""
     <style>
+    /* Language Selector UI */
+    .stSelectbox {
+        margin-top: -50px;
+    }
     div.stButton > button {
-        width: 280px;
+        width: 100%;
         height: 140px;
         border-radius: 15px;
         border: 1px solid #555;
@@ -59,20 +77,18 @@ st.markdown("""
     }
     div.stButton > button:active, div.stButton > button:focus {
         border: 3px solid #007bff !important;
-        background-color: #e7f3ff !important;
+        background-color: #f0f8ff !important;
         color: black !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-if 'selected_pack' not in st.session_state:
-    st.session_state.selected_pack = None
-if 'selected_price' not in st.session_state:
-    st.session_state.selected_price = None
+# ညာဘက်အပေါ်ထောင့်မှာ Language Selector ပြရန် column ခွဲခြင်း
+lang_col1, lang_col2 = st.columns([4, 1.5])
+with lang_col2:
+    sel_lang = st.selectbox("", ["မြန်မာ", "English", "日本語"], label_visibility="collapsed")
 
-sel_lang = st.sidebar.selectbox("Language / ဘာသာစကား", ["မြန်မာ", "English"])
 t = LANG[sel_lang]
-
 st.title(t["title"])
 
 # --- ၄။ Account Info ---
@@ -85,15 +101,22 @@ with col_zone:
 
 # --- ၅။ Currency Selection ---
 st.subheader(t["pay_method"])
-currency = st.radio("Currency:", ["MMK", "JPY", "USDT"], horizontal=True, label_visibility="collapsed")
+currency = st.radio(t["curr_label"], ["MMK", "JPY", "USDT"], horizontal=True, label_visibility="collapsed")
 
 # --- ၆။ Item Selection Grid (တစ်တန်း ၂ ခု) ---
 st.subheader(t["select_pack"])
 cols = st.columns(2)
 
+if 'selected_pack' not in st.session_state:
+    st.session_state.selected_pack = None
+if 'selected_price' not in st.session_state:
+    st.session_state.selected_price = None
+
 for i, pack in enumerate(packs_data):
     price_val = pack[currency.lower()]
-    price_display = f"{price_val:,} {currency}"
+    # JPY အတွက်ဆိုရင် 円 လို့ပြမယ်
+    curr_text = "円" if currency == "JPY" else currency
+    price_display = f"{price_val:,} {curr_text}"
     label = f"{pack['icon']}\n{pack['name']}\n{price_display}"
     
     with cols[i % 2]:
@@ -107,9 +130,10 @@ if st.session_state.selected_pack:
 # --- ၇။ Payment & Upload ---
 st.markdown("---")
 with st.container(border=True):
-    st.markdown(f"*Transfer to {currency} Address:*")
+    # Japan ဘာသာစကားဆိုရင် Japan Post ကို အပေါ်မှာပြပေးမယ်
+    st.markdown(f"*Transfer to {currency}:*")
     if currency == "MMK": st.code("KPay: 09 123 456 789")
-    elif currency == "JPY": st.code("Japan Post: 12345-67890")
+    elif currency == "JPY": st.code("Japan Post: 12345-67890 (MYO MIN)")
     else: st.code("USDT (TRC20): TXXXXXXXXXXXXXXXX")
 
 payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
