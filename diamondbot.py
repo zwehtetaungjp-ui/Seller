@@ -52,9 +52,9 @@ packs_data = [
     {"name": "86 Diamonds", "icon": "💎", "mmk": 4900, "jpy": 480, "usdt": 3.3},
     {"name": "172 Diamonds", "icon": "🎁", "mmk": 9600, "jpy": 950, "usdt": 6.5},
     {"name": "257 Diamonds", "icon": "📦", "mmk": 13900, "jpy": 1850, "usdt": 12.8},
-    {"name": "343 Diamonds", "icon": "🏆", "mmk": 18800, "jpy": 2800, "usdt": 19.5},
-    {"name": "429 Diamonds", "icon": "👜", "mmk": 82000, "jpy": 4700, "usdt": 32.5},
-    {"name": "6000 Diamonds", "icon": "👑", "mmk": 160000, "jpy": 9200, "usdt": 63.0}
+    {"name": "706 Diamonds", "icon": "🏆", "mmk": 18800, "jpy": 2800, "usdt": 19.5},
+    {"name": "3688 Diamonds", "icon": "👜", "mmk": 82000, "jpy": 4700, "usdt": 32.5},
+    {"name": "x Diamonds", "icon": "👑", "mmk": x, "jpy": x, "usdt": x}
 ]
 
 # --- ၃။ Page Setup & Styling ---
@@ -157,6 +157,7 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
 
 
 
