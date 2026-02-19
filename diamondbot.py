@@ -50,7 +50,7 @@ st.set_page_config(page_title="MLBB Shop", page_icon="💎", layout="centered")
 st.markdown("""
     <style>
     div.stButton > button {
-        width: 100%;
+        width: 280px;
         height: 140px;
         border-radius: 15px;
         border: 1px solid #555;
@@ -133,3 +133,4 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
