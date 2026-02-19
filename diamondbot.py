@@ -3,6 +3,7 @@ import requests
 import json
 
 # --- ၁။ CONFIGURATION ---
+# @BotFather မှရသော Token နှင့် @userinfobot မှရသော ID ကို ဤနေရာတွင် ထည့်ပါ
 BOT_TOKEN = "မင်းရဲ့_BOT_TOKEN_ဒီမှာထည့်"
 ADMIN_CHAT_ID = "မင်းရဲ့_CHAT_ID_ဒီမှာထည့်"
 
@@ -32,7 +33,6 @@ LANG = {
     }
 }
 
-# Diamond packs data (Weekly, Starlight နှင့် Amount များတာများ ထပ်တိုးထားသည်)
 packs_data = [
     {"name": "Weekly Diamond Pass", "icon": "🎟️", "mmk": 2500, "jpy": 150, "usdt": 1.0},
     {"name": "Starlight Pass", "icon": "🌟", "mmk": 7500, "jpy": 450, "usdt": 3.2},
@@ -44,7 +44,7 @@ packs_data = [
     {"name": "6000 Diamonds", "icon": "👑", "mmk": 160000, "jpy": 9200, "usdt": 63.0}
 ]
 
-# --- ၃။ Page Setup & Custom CSS ---
+# --- ၃။ Page Setup & CSS Styling ---
 st.set_page_config(page_title="MLBB Shop", page_icon="💎", layout="centered")
 
 st.markdown("""
@@ -63,7 +63,7 @@ st.markdown("""
         color: black !important;
     }
     </style>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 if 'selected_pack' not in st.session_state:
     st.session_state.selected_pack = None
@@ -93,7 +93,7 @@ cols = st.columns(2)
 
 for i, pack in enumerate(packs_data):
     price_val = pack[currency.lower()]
-    price_display = f"{price_val:,} {currency}" # ဈေးနှုန်းကြားမှာ ကော်မာ (,) ထည့်ပေးထားသည်
+    price_display = f"{price_val:,} {currency}"
     label = f"{pack['icon']}\n{pack['name']}\n{price_display}"
     
     with cols[i % 2]:
@@ -107,7 +107,7 @@ if st.session_state.selected_pack:
 # --- ၇။ Payment & Upload ---
 st.markdown("---")
 with st.container(border=True):
-    st.markdown(f*🏦 Transfer to {currency} Address:**")
+    st.markdown(f"*Transfer to {currency} Address:*")
     if currency == "MMK": st.code("KPay: 09 123 456 789")
     elif currency == "JPY": st.code("Japan Post: 12345-67890")
     else: st.code("USDT (TRC20): TXXXXXXXXXXXXXXXX")
@@ -118,19 +118,12 @@ payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
 if st.button(t["btn"], use_container_width=True, type="primary"):
     if user_id and zone_id and payment_ss and st.session_state.selected_pack:
         with st.spinner("Processing..."):
-            caption = (f"📦 *New Order!*\n\n"
-                      f"👤 ID: {user_id} ({zone_id})\n"
-                      f"📦 Item: {st.session_state.selected_pack}\n"
-                      f"💰 Price: {st.session_state.selected_price}\n"
-                      f"💳 Method: {currency}")
+            caption = (f"📦 New Order!\n\n👤 ID: {user_id} ({zone_id})\n📦 Item: {st.session_state.selected_pack}\n💰 Price: {st.session_state.selected_price}\n💳 Method: {currency}")
             
             url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
-            reply_markup = {"inline_keyboard": [[
-                {"text": "✅ Approve", "callback_data": "approve"},
-                {"text": "❌ Reject", "callback_data": "reject"}
-            ]]}
+            reply_markup = {"inline_keyboard": [[{"text": "✅ Approve", "callback_data": "approve"},{"text": "❌ Reject", "callback_data": "reject"}]]}
             
-            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown', 'reply_markup': json.dumps(reply_markup)}
+            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'reply_markup': json.dumps(reply_markup)}
             res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
             
             if res.status_code == 200:
