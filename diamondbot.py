@@ -47,12 +47,12 @@ LANG = {
 }
 
 packs_data = [
-    {"name": "Weekly Diamond Pass", "icon": "🎟️", "mmk": 6100, "jpy": 270, "usdt": 2.5},
-    {"name": "Twilight Pass", "icon": "🌟", "mmk": 35100, "jpy": 1300, "usdt": 3.2},
-    {"name": "86 Diamonds", "icon": "💎", "mmk": 5500, "jpy": 216, "usdt": 2.22},
-    {"name": "172 Diamonds", "icon": "🎁", "mmk": 10500, "jpy": 432, "usdt": 3.94 },
-    {"name": "257 Diamonds", "icon": "📦", "mmk": 15000, "jpy": 623, "usdt": 5.64},
-    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1680, "usdt": 14.62},
+    {"name": "Weekly Diamond Pass", "icon": "🎟️", "mmk": 6100, "jpy": 270, "usdt": 1.8},
+    {"name": "Twilight Pass", "icon": "🌟", "mmk": 35100, "jpy": 1300, "usdt": 8},
+    {"name": "86 Diamonds", "icon": "💎", "mmk": 5500, "jpy": 216, "usdt": 1.72},
+    {"name": "172 Diamonds", "icon": "🎁", "mmk": 10500, "jpy": 432, "usdt": 3.44 },
+    {"name": "257 Diamonds", "icon": "📦", "mmk": 15000, "jpy": 623, "usdt": 5.14},
+    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1680, "usdt": 14.12},
     {"name": "0 Diamonds", "icon": "👜", "mmk": 0, "jpy": 0, "usdt": 0},
     {"name": "0 Diamonds", "icon": "👑", "mmk": 0, "jpy": 0, "usdt": 0}
 ]
@@ -101,7 +101,7 @@ with col_zone:
 
 # --- ၅။ Currency Selection ---
 st.subheader(t["pay_method"])
-currency = st.radio(t["curr_label"], ["MMK", "JPY", "USDT"], horizontal=True, label_visibility="collapsed")
+currency = st.radio(t["curr_label"], ["JPY", "MMK", "USDT"], horizontal=True, label_visibility="collapsed")
 
 # --- ၆။ Item Selection Grid (တစ်တန်း ၂ ခု) ---
 st.subheader(t["select_pack"])
@@ -157,6 +157,7 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
 
 
 
