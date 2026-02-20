@@ -141,49 +141,23 @@ payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
 # --- ၈။ Final Submit ---
 if st.button(t["btn"], use_container_width=True, type="primary"):
     if user_id and zone_id and payment_ss and st.session_state.selected_pack:
-        # Step 1: Telegram ကို အချက်အလက်ပို့ခြင်း
-        status_text = st.empty()
-        status_text.warning(t["processing"])
-        
-        order_time = time.time()
-        caption = (f"📩 *New Order (Pending Approval)*\n\n"
-                  f"👤 ID: `{user_id}` ({zone_id})\n"
-                  f"📦 Item: {st.session_state.selected_pack}\n"
-                  f"💰 Price: {st.session_state.selected_price}\n"
-                  f"⏰ Time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
-        
-        # Approve Button ကို Inline Keyboard နဲ့ ပို့မယ်
-        url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
-        res = requests.post(url, files={'photo': payment_ss.getvalue()}, data={'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown'})
-        
-        if res.status_code == 200:
-            # Step 2: Telegram က reply ပြန်လာတာကို စောင့်ကြည့်ခြင်း (Long Polling အသေးစား)
-            # ဒီနေရာမှာ Admin က Approve လုပ်မလုပ်ကို ၃၀ စက္ကန့်လောက် စောင့်ကြည့်မယ်
-            found_approval = False
-            for _ in range(30): # ၃၀ စက္ကန့်စောင့်မယ်
-                time.sleep(2)
-                # Telegram Updates ကို စစ်ဆေးခြင်း
-                update_url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
-                updates = requests.get(update_url).json()
-                
-                # Update တွေထဲမှာ ဒီ Order ကို Approve လုပ်ထားသလား ရှာမယ်
-                # (မှတ်ချက် - ဒါက အခြေခံစနစ်ဖြစ်လို့ Admin က 'ok' လို့ ပြန်စာပို့ရင် Approve လို့ သတ်မှတ်မယ်)
-                for up in updates.get("result", []):
-                    msg = up.get("message", {}).get("text", "").lower()
-                    if msg == "ok" or msg == "done":
-                        found_approval = True
-                        break
-                
-                if found_approval: break
+        with st.spinner("Processing..."):
+            caption = (f"📦 New Order!\n\n👤 ID: {user_id} ({zone_id})\n📦 Item: {st.session_state.selected_pack}\n💰 Price: {st.session_state.selected_price}\n💳 Method: {currency}")
             
-            # Step 3: ရလဒ်ပြသခြင်း
-            status_text.empty()
-            st.success(t["success"])
-            st.balloons()
-        else:
-            st.error("Connection Error!")
+            url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+            reply_markup = {"inline_keyboard": [[{"text": "✅ Approve", "callback_data": "approve"},{"text": "❌ Reject", "callback_data": "reject"}]]}
+            
+            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'reply_markup': json.dumps(reply_markup)}
+            res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
+            
+            if res.status_code == 200:
+                st.success(t["success"])
+                st.balloons()
+            else:
+                st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
 
 
 
