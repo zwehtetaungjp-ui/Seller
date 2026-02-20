@@ -132,8 +132,8 @@ st.markdown("---")
 with st.container(border=True):
     # Japan ဘာသာစကားဆိုရင် Japan Post ကို အပေါ်မှာပြပေးမယ်
     st.markdown(f"*Transfer to {currency}:*")
-    if currency == "MMK": st.code("KPay: 09 123 456 789")
-    elif currency == "JPY": st.code("Japan Post: 12345-67890 (MYO MIN)")
+    if currency == "MMK": st.code("KPay: 09256084562 (U ZWE HTET AUNG")
+    elif currency == "JPY": st.code("PayPay : 08042419779")
     else: st.code("USDT (TRC20): TXXXXXXXXXXXXXXXX")
 
 payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
@@ -157,6 +157,7 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
 
 
 
