@@ -3,8 +3,8 @@ import requests
 import json
 
 # --- ၁။ CONFIGURATION ---
-BOT_TOKEN = "မင်းရဲ့_BOT_TOKEN_ဒီမှာထည့်"
-ADMIN_CHAT_ID = "မင်းရဲ့_CHAT_ID_ဒီမှာထည့်"
+BOT_TOKEN = "8403531874:AAGZjRK_4xPNZ5igmHRmu5NIuLf8rS1sb-g"
+ADMIN_CHAT_ID = "6826543956"
 
 # --- ၂။ ဘာသာစကား နှင့် ဒေတာများ ---
 LANG = {
@@ -47,14 +47,14 @@ LANG = {
 }
 
 packs_data = [
-    {"name": "Weekly Diamond Pass", "icon": "🎟️", "mmk": 2500, "jpy": 150, "usdt": 1.0},
-    {"name": "Starlight Pass", "icon": "🌟", "mmk": 7500, "jpy": 450, "usdt": 3.2},
-    {"name": "275 Diamonds", "icon": "💎", "mmk": 8500, "jpy": 480, "usdt": 3.3},
-    {"name": "565 Diamonds", "icon": "🎁", "mmk": 16500, "jpy": 950, "usdt": 6.5},
-    {"name": "1155 Diamonds", "icon": "📦", "mmk": 32000, "jpy": 1850, "usdt": 12.8},
-    {"name": "1765 Diamonds", "icon": "🏆", "mmk": 48000, "jpy": 2800, "usdt": 19.5},
-    {"name": "2975 Diamonds", "icon": "👜", "mmk": 82000, "jpy": 4700, "usdt": 32.5},
-    {"name": "6000 Diamonds", "icon": "👑", "mmk": 160000, "jpy": 9200, "usdt": 63.0}
+    {"name": "Weekly Diamond Pass", "icon": "🎟️", "mmk": 6100, "jpy": 270, "usdt": 2.5},
+    {"name": "Twilight Pass", "icon": "🌟", "mmk": 35100, "jpy": 1300, "usdt": 3.2},
+    {"name": "86 Diamonds", "icon": "💎", "mmk": 5500, "jpy": 216, "usdt": 2.22},
+    {"name": "172 Diamonds", "icon": "🎁", "mmk": 10500, "jpy": 432, "usdt": 3.94 },
+    {"name": "257 Diamonds", "icon": "📦", "mmk": 15000, "jpy": 623, "usdt": 5.64},
+    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1680, "usdt": 14.62},
+    {"name": "x Diamonds", "icon": "👜", "mmk": x, "jpy": x, "usdt": x},
+    {"name": "x Diamonds", "icon": "👑", "mmk": x, "jpy": x, "usdt": x}
 ]
 
 # --- ၃။ Page Setup & Styling ---
@@ -157,6 +157,7 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
 
 
 
