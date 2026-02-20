@@ -141,43 +141,72 @@ payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
 # --- ၈။ Final Submit ---
 if st.button(t["btn"], use_container_width=True, type="primary"):
     if user_id and zone_id and payment_ss and st.session_state.selected_pack:
-        with st.spinner("Processing..."):
-            caption = (f"📦 New Order!\n\n👤 ID: {user_id} ({zone_id})\n📦 Item: {st.session_state.selected_pack}\n💰 Price: {st.session_state.selected_price}\n💳 Method: {currency}")
+        # စာသားပြရန် နေရာလွတ်ယူခြင်း
+        status_placeholder = st.empty()
+        status_placeholder.warning(t["processing"])
+        
+        with st.spinner(""):
+            caption = (f"📩 *New Order (Pending Approval)*\n\n"
+                      f"👤 ID: `{user_id}` ({zone_id})\n"
+                      f"📦 Item: {st.session_state.selected_pack}\n"
+                      f"💰 Price: {st.session_state.selected_price}\n"
+                      f"💳 Method: {currency}")
             
+            # Telegram ကို ပုံပို့ခြင်း
             url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
-            reply_markup = {"inline_keyboard": [[{"text": "✅ Approve", "callback_data": "approve"},{"text": "❌ Reject", "callback_data": "reject"}]]}
+            reply_markup = {"inline_keyboard": [[
+                {"text": "✅ Approve", "callback_data": "approve"},
+                {"text": "❌ Reject", "callback_data": "reject"}
+            ]]}
             
-            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'reply_markup': json.dumps(reply_markup)}
+            data = {'chat_id': ADMIN_CHAT_ID, 'caption': caption, 'parse_mode': 'Markdown', 'reply_markup': json.dumps(reply_markup)}
             res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
             
             if res.status_code == 200:
-            # Step 2: Telegram က reply ပြန်လာတာကို စောင့်ကြည့်ခြင်း (Long Polling အသေးစား)
-            # ဒီနေရာမှာ Admin က Approve လုပ်မလုပ်ကို ၃၀ စက္ကန့်လောက် စောင့်ကြည့်မယ်
-            found_approval = False
-            for _ in range(30): # ၃၀ စက္ကန့်စောင့်မယ်
-                time.sleep(2)
-                # Telegram Updates ကို စစ်ဆေးခြင်း
-                update_url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
-                updates = requests.get(update_url).json()
+                # Admin ရဲ့ Approve ကို စောင့်ကြည့်ခြင်း
+                found_approval = False
                 
-                # Update တွေထဲမှာ ဒီ Order ကို Approve လုပ်ထားသလား ရှာမယ်
-                # (မှတ်ချက် - ဒါက အခြေခံစနစ်ဖြစ်လို့ Admin က 'ok' လို့ ပြန်စာပို့ရင် Approve လို့ သတ်မှတ်မယ်)
-                for up in updates.get("result", []):
-                    msg = up.get("message", {}).get("text", "").lower()
-                    if msg == "ok" or msg == "done":
-                        found_approval = True
-                        break
+                # စက္ကန့် ၆၀ အထိ တိုးပေးထားပါတယ် (Admin က ငွေစစ်ဖို့ အချိန်ရအောင်)
+                for _ in range(30): 
+                    time.sleep(2) # ၂ စက္ကန့်တစ်ခါ စစ်မယ်
+                    
+                    update_url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
+                    try:
+                        updates = requests.get(update_url).json()
+                        
+                        for up in updates.get("result", []):
+                            # ၁။ Inline Button (Approve) ကို နှိပ်ခြင်းအား စစ်ဆေးခြင်း
+                            if "callback_query" in up:
+                                cb_data = up["callback_query"].get("data")
+                                if cb_data == "approve":
+                                    found_approval = True
+                                    break
+                            
+                            # ၂။ Admin က 'ok' သို့မဟုတ် 'done' လို့ စာရိုက်ပို့ခြင်းအား စစ်ဆေးခြင်း
+                            if "message" in up and "text" in up["message"]:
+                                msg_text = up["message"]["text"].lower()
+                                if msg_text in ["ok", "done", "approve"]:
+                                    found_approval = True
+                                    break
+                        
+                        if found_approval:
+                            break
+                    except:
+                        continue
                 
-                if found_approval: break
-            
-            # Step 3: ရလဒ်ပြသခြင်း
-            status_text.empty()
-            st.success(t["success"])
-            st.balloons()
-        else:
-            st.error("Connection Error!")
+                # ရလဒ် ထုတ်ပြန်ခြင်း
+                status_placeholder.empty()
+                if found_approval:
+                    st.success(t["success"])
+                    st.balloons()
+                else:
+                    st.error("Approval Timeout: ကျေးဇူးပြု၍ Admin ကို တိုက်ရိုက်ဆက်သွယ်ပေးပါ။")
+            else:
+                status_placeholder.empty()
+                st.error("Telegram Connection Error!")
     else:
         st.error(t["error"])
+
 
 
 
