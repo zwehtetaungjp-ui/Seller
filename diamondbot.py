@@ -151,12 +151,34 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
             res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
             
             if res.status_code == 200:
-                st.success(t["success"])
-                st.balloons()
-            else:
-                st.error("Telegram Error! Check Token/ID.")
+            # Step 2: Telegram က reply ပြန်လာတာကို စောင့်ကြည့်ခြင်း (Long Polling အသေးစား)
+            # ဒီနေရာမှာ Admin က Approve လုပ်မလုပ်ကို ၃၀ စက္ကန့်လောက် စောင့်ကြည့်မယ်
+            found_approval = False
+            for _ in range(30): # ၃၀ စက္ကန့်စောင့်မယ်
+                time.sleep(2)
+                # Telegram Updates ကို စစ်ဆေးခြင်း
+                update_url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
+                updates = requests.get(update_url).json()
+                
+                # Update တွေထဲမှာ ဒီ Order ကို Approve လုပ်ထားသလား ရှာမယ်
+                # (မှတ်ချက် - ဒါက အခြေခံစနစ်ဖြစ်လို့ Admin က 'ok' လို့ ပြန်စာပို့ရင် Approve လို့ သတ်မှတ်မယ်)
+                for up in updates.get("result", []):
+                    msg = up.get("message", {}).get("text", "").lower()
+                    if msg == "ok" or msg == "done":
+                        found_approval = True
+                        break
+                
+                if found_approval: break
+            
+            # Step 3: ရလဒ်ပြသခြင်း
+            status_text.empty()
+            st.success(t["success"])
+            st.balloons()
+        else:
+            st.error("Connection Error!")
     else:
         st.error(t["error"])
+
 
 
 
