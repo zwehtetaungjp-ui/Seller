@@ -49,12 +49,12 @@ LANG = {
 packs_data = [
     {"name": "Weekly Diamond Pass", "icon": "🎟️", "mmk": 2500, "jpy": 150, "usdt": 1.0},
     {"name": "Starlight Pass", "icon": "🌟", "mmk": 7500, "jpy": 450, "usdt": 3.2},
-    {"name": "86 Diamonds", "icon": "💎", "mmk": 4900, "jpy": 480, "usdt": 3.3},
-    {"name": "172 Diamonds", "icon": "💎💎", "mmk": 9600, "jpy": 950, "usdt": 6.5},
-    {"name": "257 Diamonds", "icon": "💎💎💎", "mmk": 13900, "jpy": 1850, "usdt": 12.8},
-    {"name": "706 Diamonds", "icon": "💎💎💎", "mmk": 18800, "jpy": 2800, "usdt": 19.5},
-    {"name": "3688 Diamonds", "icon": "💎💎💎", "mmk": 82000, "jpy": 4700, "usdt": 32.5},
-    {"name": "x Diamonds", "icon": "💎", "mmk": x, "jpy": x, "usdt": x}
+    {"name": "275 Diamonds", "icon": "💎", "mmk": 8500, "jpy": 480, "usdt": 3.3},
+    {"name": "565 Diamonds", "icon": "🎁", "mmk": 16500, "jpy": 950, "usdt": 6.5},
+    {"name": "1155 Diamonds", "icon": "📦", "mmk": 32000, "jpy": 1850, "usdt": 12.8},
+    {"name": "1765 Diamonds", "icon": "🏆", "mmk": 48000, "jpy": 2800, "usdt": 19.5},
+    {"name": "2975 Diamonds", "icon": "👜", "mmk": 82000, "jpy": 4700, "usdt": 32.5},
+    {"name": "6000 Diamonds", "icon": "👑", "mmk": 160000, "jpy": 9200, "usdt": 63.0}
 ]
 
 # --- ၃။ Page Setup & Styling ---
@@ -68,7 +68,7 @@ st.markdown("""
         margin-top: -50px;
     }
     div.stButton > button {
-        width: 280px;
+        width: 100%;
         height: 140px;
         border-radius: 15px;
         border: 1px solid #555;
