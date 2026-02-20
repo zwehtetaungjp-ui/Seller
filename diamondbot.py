@@ -50,11 +50,11 @@ packs_data = [
     {"name": "Weekly Diamond Pass", "icon": "🎟️", "mmk": 2500, "jpy": 150, "usdt": 1.0},
     {"name": "Starlight Pass", "icon": "🌟", "mmk": 7500, "jpy": 450, "usdt": 3.2},
     {"name": "86 Diamonds", "icon": "💎", "mmk": 4900, "jpy": 480, "usdt": 3.3},
-    {"name": "172 Diamonds", "icon": "🎁", "mmk": 9600, "jpy": 950, "usdt": 6.5},
-    {"name": "257 Diamonds", "icon": "📦", "mmk": 13900, "jpy": 1850, "usdt": 12.8},
-    {"name": "706 Diamonds", "icon": "🏆", "mmk": 18800, "jpy": 2800, "usdt": 19.5},
-    {"name": "3688 Diamonds", "icon": "👜", "mmk": 82000, "jpy": 4700, "usdt": 32.5},
-    {"name": "x Diamonds", "icon": "👑", "mmk": x, "jpy": x, "usdt": x}
+    {"name": "172 Diamonds", "icon": "💎💎", "mmk": 9600, "jpy": 950, "usdt": 6.5},
+    {"name": "257 Diamonds", "icon": "💎💎💎", "mmk": 13900, "jpy": 1850, "usdt": 12.8},
+    {"name": "706 Diamonds", "icon": "💎💎💎", "mmk": 18800, "jpy": 2800, "usdt": 19.5},
+    {"name": "3688 Diamonds", "icon": "💎💎💎", "mmk": 82000, "jpy": 4700, "usdt": 32.5},
+    {"name": "x Diamonds", "icon": "💎", "mmk": x, "jpy": x, "usdt": x}
 ]
 
 # --- ၃။ Page Setup & Styling ---
@@ -157,6 +157,7 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Error! Check Token/ID.")
     else:
         st.error(t["error"])
+
 
 
 
