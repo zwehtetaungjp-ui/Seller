@@ -66,7 +66,7 @@ st.markdown("""
     <style>
     .stSelectbox { margin-top: -50px; }
     div.stButton > button {
-        width: 100%;
+        width: 280px;
         height: 120px;
         border-radius: 15px;
         border: 1px solid #555;
@@ -185,3 +185,4 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Connection Error!")
     else:
         st.error(t["error"])
+
