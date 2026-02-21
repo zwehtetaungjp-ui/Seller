@@ -52,13 +52,13 @@ LANG = {
 
 packs_data = [
     {"name": "Weekly Diamond Pass", "icon": "🎟️", "mmk": 6100, "jpy": 270, "usdt": 1.8},
-    {"name": "Twilight Pass", "icon": "🌟", "mmk": 35100, "jpy": 1300, "usdt": 8},
     {"name": "86 Diamonds", "icon": "💎", "mmk": 5500, "jpy": 216, "usdt": 1.72},
-    {"name": "172 Diamonds", "icon": "🎁", "mmk": 10500, "jpy": 432, "usdt": 3.44 },
-    {"name": "257 Diamonds", "icon": "📦", "mmk": 15000, "jpy": 652, "usdt": 5.14},
-    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1712, "usdt": 14.12}
-    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1712, "usdt": 14.12}
-    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1712, "usdt": 14.12}
+    {"name": "172 Diamonds", "icon": "🎁", "mmk": 10500, "jpy": 432, "usdt": 3.44},
+    {"name": "257 Diamonds", "icon": "📦", "mmk": 15000, "jpy": 623, "usdt": 5.14},
+    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1680, "usdt": 14.12},
+    {"name": "1412 Diamonds", "icon": "👜", "mmk": 78000, "jpy": 3360, "usdt": 28.24},
+    {"name": "2195 Diamonds", "icon": "👑", "mmk": 117000, "jpy": 5040, "usdt": 42.36},
+    {"name": "Twilight Pass", "icon": "🌟", "mmk": 35100, "jpy": 1300, "usdt": 8}
 ]
 
 # --- ၃။ Page Setup & Styling ---
@@ -137,12 +137,11 @@ payment_ss = st.file_uploader(t["upload"], type=['jpg', 'png', 'jpeg'])
 # --- ၈။ Final Submit with Approval Logic ---
 if st.button(t["btn"], use_container_width=True, type="primary"):
     if user_id and zone_id and payment_ss and st.session_state.selected_pack:
-        # စာသားပြရန် နေရာယူခြင်း
         status_placeholder = st.empty()
         status_placeholder.warning(t["processing"])
         
         with st.spinner(""):
-            caption = (f"📩 *New Order (Pending Approval)*\n\n"
+            caption = (f"📦 *New Order (Pending Approval)*\n\n"
                       f"👤 ID: `{user_id}` ({zone_id})\n"
                       f"📦 Item: {st.session_state.selected_pack}\n"
                       f"💰 Price: {st.session_state.selected_price}\n"
@@ -158,18 +157,15 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
             res = requests.post(url, files={'photo': payment_ss.getvalue()}, data=data)
             
             if res.status_code == 200:
-                # Admin ရဲ့ Approve ကို စောင့်ကြည့်ခြင်း (၆၀ စက္ကန့်အထိ စောင့်မည်)
                 found_approval = False
                 for _ in range(30):
                     time.sleep(2)
                     try:
                         updates = requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates").json()
                         for up in updates.get("result", []):
-                            # Button နှိပ်ခြင်းကို စစ်ဆေးခြင်း
                             if "callback_query" in up and up["callback_query"].get("data") == "approve":
                                 found_approval = True
                                 break
-                            # Admin က 'ok' လို့ စာရိုက်ပို့ခြင်းကို စစ်ဆေးခြင်း
                             if "message" in up and up["message"].get("text", "").lower() in ["ok", "done", "approve"]:
                                 found_approval = True
                                 break
@@ -187,5 +183,3 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Connection Error!")
     else:
         st.error(t["error"])
-
-
