@@ -55,8 +55,10 @@ packs_data = [
     {"name": "Twilight Pass", "icon": "🌟", "mmk": 35100, "jpy": 1300, "usdt": 8},
     {"name": "86 Diamonds", "icon": "💎", "mmk": 5500, "jpy": 216, "usdt": 1.72},
     {"name": "172 Diamonds", "icon": "🎁", "mmk": 10500, "jpy": 432, "usdt": 3.44 },
-    {"name": "257 Diamonds", "icon": "📦", "mmk": 15000, "jpy": 623, "usdt": 5.14},
-    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1680, "usdt": 14.12}
+    {"name": "257 Diamonds", "icon": "📦", "mmk": 15000, "jpy": 652, "usdt": 5.14},
+    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1712, "usdt": 14.12}
+    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1712, "usdt": 14.12}
+    {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1712, "usdt": 14.12}
 ]
 
 # --- ၃။ Page Setup & Styling ---
@@ -185,4 +187,5 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Connection Error!")
     else:
         st.error(t["error"])
+
 
