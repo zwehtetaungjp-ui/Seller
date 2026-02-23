@@ -57,8 +57,8 @@ packs_data = [
     {"name": "172 Diamonds", "icon": "🎁", "mmk": 10500, "jpy": 432, "usdt": 3.44},
     {"name": "257 Diamonds", "icon": "📦", "mmk": 15000, "jpy": 623, "usdt": 5.14},
     {"name": "706 Diamonds", "icon": "🏆", "mmk": 39000, "jpy": 1680, "usdt": 14.12},
-    {"name": "1412 Diamonds", "icon": "👜", "mmk": 78000, "jpy": 3360, "usdt": 28.24},
     {"name": "2195 Diamonds", "icon": "👑", "mmk": 117000, "jpy": 5040, "usdt": 42.36}
+    {"name": "3688 Diamonds", "icon": "👜", "mmk": 254850, "jpy": 8468, "usdt": 71.17}
 ]
 
 # --- ၃။ Page Setup & Styling ---
@@ -183,4 +183,5 @@ if st.button(t["btn"], use_container_width=True, type="primary"):
                 st.error("Telegram Connection Error!")
     else:
         st.error(t["error"])
+
 
